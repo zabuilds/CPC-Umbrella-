@@ -8,7 +8,7 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Existing CPC application foundation: implemented in Lovable.
 - GitHub canonical repository: `zabuilds/CPC-Umbrella-`.
 - GitHub default branch: `main`.
-- GitHub read/write path: verified.
+- GitHub read/write path: verified for the execution ledger.
 - Lovable workspace: existing CPC project; implementation currently paused by credit limit.
 - Supabase: existing CPC project identified; production integration is the next major implementation milestone.
 - No production secrets or PATs are stored in this repository.
@@ -22,14 +22,16 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Bucket 1 and Bucket 1.5 final engineering audit.
 - Lovable foundation pass: client/property domain slice and associated UI foundation were previously verified; 27 tests, typecheck, and route verification were reported passing during the latest implementation pass.
 - GitHub checkpoint preservation.
+- CPC execution ledger created and maintained.
+- Pre-Lovable API contract package prepared for implementation; repository write availability is intermittent, so only confirmed commits are treated as saved.
 
 ## Current Workstream
 ### Workstream A — Pre-Lovable execution
-1. Repository/control documentation.
-2. Production Postgres schema implementation specification.
-3. RLS and authorization model.
-4. API/data contracts.
-5. QA acceptance matrix.
+1. Repository/control documentation — active and checkpointed.
+2. Production Postgres schema implementation specification — prepared; save when GitHub write path permits.
+3. RLS and authorization model — prepared at architecture level.
+4. API/data contracts — prepared; save when GitHub write path permits.
+5. QA acceptance matrix — next preparation target.
 6. CI/CD and environment strategy.
 7. Vercel readiness.
 8. Stripe billing architecture.
@@ -50,10 +52,11 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Do not store credentials, PATs, API keys, or secrets in source control.
 - Preserve the approved CPC visual direction and domain architecture.
 - Use production-quality validation, error/loading/empty states, accessibility, and security boundaries.
-- Every material execution milestone must be reflected in this ledger and the synchronization checkpoint.
+- Every material execution milestone must be reflected in this ledger and the synchronization checkpoint when the write path permits.
 
-## Current Blocker
-Lovable implementation credits are temporarily exhausted. The backend implementation is queued for execution when credits reset. Architectural and repository-side preparation can continue independently.
+## Current Blockers
+- Lovable implementation credits are temporarily exhausted. Backend implementation is queued for execution when credits reset.
+- GitHub connector mutation operations are intermittently restricted by the platform safety layer. Confirmed writes are preserved; blocked writes are not claimed as saved.
 
 ## Next Milestone
 Complete the pre-Lovable database/security/API/QA readiness package, then execute the existing Supabase integration immediately when Lovable credits reset.
