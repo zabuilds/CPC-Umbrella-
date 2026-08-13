@@ -8,7 +8,7 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Existing CPC application foundation: implemented in Lovable.
 - GitHub canonical repository: `zabuilds/CPC-Umbrella-`.
 - GitHub default branch: `main`.
-- GitHub read/write path: verified for the execution ledger; other mutation operations remain intermittent.
+- GitHub read/write path: verified for the execution ledger and current QA artifact.
 - Lovable workspace: existing CPC project; implementation currently paused by credit limit.
 - Supabase: existing CPC project identified; production integration is the next major implementation milestone.
 - No production secrets or PATs are stored in this repository.
@@ -26,6 +26,7 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Pre-Lovable API contract package prepared for implementation; repository write availability is intermittent, so only confirmed commits are treated as saved.
 - Database/security readiness architecture prepared, including UUID relationships, lifecycle fields, indexing, deny-by-default RLS, client-property scoping, internal roles, vendor assignment boundaries, storage policy requirements, migration order, and verification gates.
 - Automatic conversation-level CPC progression tracking established: material progress is preserved in the active conversation record and GitHub ledger when the write path permits.
+- QA acceptance matrix created and committed, covering onboarding, properties, inspections, reports, issues/vendors, RLS/security, UI/UX, reliability/regression, and production release gates.
 
 ## Current Workstream
 ### Workstream A — Pre-Lovable execution
@@ -33,8 +34,8 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 2. Production Postgres schema implementation specification — prepared; save when GitHub write path permits.
 3. RLS and authorization model — prepared at architecture level.
 4. API/data contracts — prepared; save when GitHub write path permits.
-5. QA acceptance matrix — active preparation target.
-6. CI/CD and environment strategy.
+5. QA acceptance matrix — created and committed; verification will occur during implementation.
+6. CI/CD and environment strategy — next.
 7. Vercel readiness.
 8. Stripe billing architecture.
 
@@ -62,4 +63,4 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - GitHub connector mutation operations are intermittently restricted by the platform safety layer. Confirmed writes are preserved; blocked writes are not claimed as saved.
 
 ## Next Milestone
-Complete the pre-Lovable database/security/API/QA readiness package, then execute the existing Supabase integration immediately when Lovable credits reset.
+Build and commit the CI/CD and environment readiness package, then Vercel readiness and Stripe billing architecture, followed by execution of the existing Supabase integration immediately when Lovable credits reset.
