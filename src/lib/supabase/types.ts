@@ -1,28 +1,23 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
+export type AppRole = "owner" | "admin" | "operations" | "inspector" | "vendor";
+export type PropertyStatus = "active" | "inactive" | "archived";
+export type InspectionStatus = "scheduled" | "in_progress" | "completed" | "cancelled";
+export type IssueSeverity = "urgent" | "attention" | "monitor";
+export type IssueStatus = "open" | "in_progress" | "resolved" | "dismissed";
+export type VendorStatus = "active" | "inactive";
+
 export interface Database {
   public: {
     Tables: {
-      profiles: {
-        Row: { id: string; role: "owner" | "admin" | "operations" | "inspector" | "vendor"; full_name: string | null; phone: string | null; created_at: string; updated_at: string };
-        Insert: { id: string; role?: "owner" | "admin" | "operations" | "inspector" | "vendor"; full_name?: string | null; phone?: string | null; created_at?: string; updated_at?: string };
-        Update: { id?: string; role?: "owner" | "admin" | "operations" | "inspector" | "vendor"; full_name?: string | null; phone?: string | null; created_at?: string; updated_at?: string };
-      };
-      clients: {
-        Row: { id: string; profile_id: string | null; legal_name: string; display_name: string | null; email: string | null; phone: string | null; status: string; created_at: string; updated_at: string };
-        Insert: { id?: string; profile_id?: string | null; legal_name: string; display_name?: string | null; email?: string | null; phone?: string | null; status?: string; created_at?: string; updated_at?: string };
-        Update: { id?: string; profile_id?: string | null; legal_name?: string; display_name?: string | null; email?: string | null; phone?: string | null; status?: string; created_at?: string; updated_at?: string };
-      };
-      properties: {
-        Row: { id: string; client_id: string; name: string; address_line_1: string; address_line_2: string | null; city: string | null; postal_code: string | null; island: string; status: "active" | "inactive" | "archived"; access_notes: string | null; created_at: string; updated_at: string };
-        Insert: { id?: string; client_id: string; name: string; address_line_1: string; address_line_2?: string | null; city?: string | null; postal_code?: string | null; island?: string; status?: "active" | "inactive" | "archived"; access_notes?: string | null; created_at?: string; updated_at?: string };
-        Update: { id?: string; client_id?: string; name?: string; address_line_1?: string; address_line_2?: string | null; city?: string | null; postal_code?: string | null; island?: string; status?: "active" | "inactive" | "archived"; access_notes?: string | null; created_at?: string; updated_at?: string };
-      };
-      vendors: { Row: Record<string, never>; Insert: Record<string, never>; Update: Record<string, never> };
-      inspections: { Row: Record<string, never>; Insert: Record<string, never>; Update: Record<string, never> };
-      issues: { Row: Record<string, never>; Insert: Record<string, never>; Update: Record<string, never> };
-      inspection_reports: { Row: Record<string, never>; Insert: Record<string, never>; Update: Record<string, never> };
-      property_contacts: { Row: Record<string, never>; Insert: Record<string, never>; Update: Record<string, never> };
+      profiles: { Row: { id:string; role:AppRole; full_name:string|null; phone:string|null; created_at:string; updated_at:string }; Insert:{id:string; role?:AppRole; full_name?:string|null; phone?:string|null; created_at?:string; updated_at?:string}; Update:{id?:string; role?:AppRole; full_name?:string|null; phone?:string|null; created_at?:string; updated_at?:string} };
+      clients: { Row:{id:string; profile_id:string|null; legal_name:string; display_name:string|null; email:string|null; phone:string|null; status:string; created_at:string; updated_at:string}; Insert:{id?:string; profile_id?:string|null; legal_name:string; display_name?:string|null; email?:string|null; phone?:string|null; status?:string; created_at?:string; updated_at?:string}; Update:{id?:string; profile_id?:string|null; legal_name?:string; display_name?:string|null; email?:string|null; phone?:string|null; status?:string; created_at?:string; updated_at?:string} };
+      properties: { Row:{id:string; client_id:string; name:string; address_line_1:string; address_line_2:string|null; city:string|null; postal_code:string|null; island:string; status:PropertyStatus; access_notes:string|null; created_at:string; updated_at:string}; Insert:{id?:string; client_id:string; name:string; address_line_1:string; address_line_2?:string|null; city?:string|null; postal_code?:string|null; island?:string; status?:PropertyStatus; access_notes?:string|null; created_at?:string; updated_at?:string}; Update:{id?:string; client_id?:string; name?:string; address_line_1?:string; address_line_2?:string|null; city?:string|null; postal_code?:string|null; island?:string; status?:PropertyStatus; access_notes?:string|null; created_at?:string; updated_at?:string} };
+      vendors: { Row:{id:string; business_name:string; contact_name:string|null; email:string|null; phone:string|null; trade:string|null; status:VendorStatus; created_at:string; updated_at:string}; Insert:{id?:string; business_name:string; contact_name?:string|null; email?:string|null; phone?:string|null; trade?:string|null; status?:VendorStatus; created_at?:string; updated_at?:string}; Update:{id?:string; business_name?:string; contact_name?:string|null; email?:string|null; phone?:string|null; trade?:string|null; status?:VendorStatus; created_at?:string; updated_at?:string} };
+      inspections: { Row:{id:string; property_id:string; inspector_id:string|null; scheduled_for:string; started_at:string|null; completed_at:string|null; status:InspectionStatus; summary:string|null; created_at:string; updated_at:string}; Insert:{id?:string; property_id:string; inspector_id?:string|null; scheduled_for:string; started_at?:string|null; completed_at?:string|null; status?:InspectionStatus; summary?:string|null; created_at?:string; updated_at?:string}; Update:{id?:string; property_id?:string; inspector_id?:string|null; scheduled_for?:string; started_at?:string|null; completed_at?:string|null; status?:InspectionStatus; summary?:string|null; created_at?:string; updated_at?:string} };
+      issues: { Row:{id:string; property_id:string; inspection_id:string|null; vendor_id:string|null; reported_by:string|null; title:string; description:string|null; severity:IssueSeverity; status:IssueStatus; due_at:string|null; resolved_at:string|null; created_at:string; updated_at:string}; Insert:{id?:string; property_id:string; inspection_id?:string|null; vendor_id?:string|null; reported_by?:string|null; title:string; description?:string|null; severity:IssueSeverity; status?:IssueStatus; due_at?:string|null; resolved_at?:string|null; created_at?:string; updated_at?:string}; Update:{id?:string; property_id?:string; inspection_id?:string|null; vendor_id?:string|null; reported_by?:string|null; title?:string; description?:string|null; severity?:IssueSeverity; status?:IssueStatus; due_at?:string|null; resolved_at?:string|null; created_at?:string; updated_at?:string} };
+      inspection_reports: { Row:{id:string; inspection_id:string; report_version:number; report_status:string; report_data:Json; finalized_at:string|null; delivered_at:string|null; created_at:string; updated_at:string}; Insert:{id?:string; inspection_id:string; report_version?:number; report_status?:string; report_data?:Json; finalized_at?:string|null; delivered_at?:string|null; created_at?:string; updated_at?:string}; Update:{id?:string; inspection_id?:string; report_version?:number; report_status?:string; report_data?:Json; finalized_at?:string|null; delivered_at?:string|null; created_at?:string; updated_at?:string} };
+      property_contacts: { Row:{id:string; property_id:string; contact_name:string; contact_type:string; email:string|null; phone:string|null; notes:string|null; created_at:string; updated_at:string}; Insert:{id?:string; property_id:string; contact_name:string; contact_type:string; email?:string|null; phone?:string|null; notes?:string|null; created_at?:string; updated_at?:string}; Update:{id?:string; property_id?:string; contact_name?:string; contact_type?:string; email?:string|null; phone?:string|null; notes?:string|null; created_at?:string; updated_at?:string} };
     };
   };
 }
