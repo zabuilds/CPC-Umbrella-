@@ -38,7 +38,7 @@ export default async function ClientDetailPage({
 
   const inspectionCount = activity.reduce((sum, item) => sum + item.inspections.length, 0);
   const openIssueCount = activity.reduce(
-    (sum, item) => sum + item.issues.filter((issue) => issue.status !== "resolved" && issue.status !== "closed").length,
+    (sum, item) => sum + item.issues.filter((issue) => issue.status !== "resolved").length,
     0,
   );
 
@@ -47,7 +47,7 @@ export default async function ClientDetailPage({
       <Link href="/dashboard/clients">← Clients</Link>
       <header>
         <p>Client</p>
-        <h1 id="client-heading">{client.name}</h1>
+        <h1 id="client-heading">{client.display_name ?? client.legal_name}</h1>
         <p>{client.email ?? "Email not recorded"}</p>
       </header>
 
