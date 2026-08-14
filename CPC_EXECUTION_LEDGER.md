@@ -11,6 +11,7 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Dedicated construction branch: `cpc/construction`.
 - Construction handoff: complete and committed.
 - Repository/application scaffold reconciliation: complete on `cpc/construction`.
+- Core Supabase database foundation: implemented and verified.
 - No production secrets or PATs are stored in this repository.
 
 ## Completed / Verified
@@ -30,12 +31,23 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Construction handoff record committed on `cpc/construction`.
 - Next.js application scaffold reconciled onto `cpc/construction`, including package manifest, Next.js configuration, TypeScript configuration, application root layout, global styles, and initial application entry page.
 - Engineering foundation and repository-structure documents reconciled into the construction branch without replacing the approved implementation specifications.
+- Existing CPC Supabase project identified and confirmed healthy; no second project created.
+- Core CPC database tables implemented: profiles, clients, properties, vendors, inspections, issues, inspection_reports, property_contacts.
+- UUID relationships, lifecycle/status fields, timestamps, constraints, and core indexes implemented.
+- RLS enabled across all CPC public tables.
+- Authenticated owner/client/property/operations/inspector access boundaries implemented.
+- Anonymous access revoked from CPC tables.
+- Security advisor remediated and re-run with no security lints.
+- Performance advisor returned no lints.
+- Supabase TypeScript database types generated successfully.
+- Canonical migration recorded in `supabase/migrations/20260814000000_cpc_core_schema_and_rls_foundation.sql`.
+- Database implementation checkpoint committed to `cpc/construction`.
 
 ## Current Workstream
 ### Workstream A — Construction
 1. Repository/application scaffold reconciliation — complete.
-2. Database implementation and migrations — next.
-3. Supabase integration and security enforcement.
+2. Database implementation and migrations — complete for core foundation; continue with application reconciliation and security test coverage.
+3. Supabase integration and security enforcement — active.
 4. API/server implementation.
 5. Frontend application shell and core workflows.
 6. Billing/integration implementation.
@@ -46,7 +58,7 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 ### Workstream B — Existing implementation history
 1. Existing Lovable CPC foundation remains preserved as prior implementation history.
 2. Existing Supabase project remains the intended backend target; do not provision a second project.
-3. Backend implementation is queued for execution against the approved database/security specifications.
+3. Backend implementation is now proceeding independently of Lovable where the connected engineering toolchain permits.
 
 ## Non-Negotiables
 - Do not fabricate integrations, data, tests, or deployment status.
@@ -62,7 +74,7 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Lovable implementation credits are temporarily exhausted. This does not block repository construction work that can be executed through the available engineering toolchain.
 - GitHub connector mutation operations may be intermittently restricted by the platform safety layer. Confirmed writes are preserved; blocked writes are not claimed as saved.
 
-## Construction Checkpoint
+## Construction Checkpoints
 ### Repository/Application Scaffold Reconciliation — COMPLETE
 - Construction branch exists and remains isolated from other CPC branches.
 - Approved foundation package/configuration was reconciled into the construction branch.
@@ -72,5 +84,16 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Existing engineering documentation remains preserved.
 - No destructive branch operation performed.
 
+### Core Database Foundation — COMPLETE
+- Existing CPC Supabase project verified healthy.
+- Public schema verified empty before CPC application tables were introduced.
+- Core relational schema implemented through a named migration.
+- RLS enabled on all CPC public tables.
+- Access policies implemented for approved initial ownership/operations boundaries.
+- Security advisor clean after remediation.
+- Performance advisor clean.
+- Generated database types verified.
+- No credentials or secrets stored in source control.
+
 ## Next Milestone
-Implement the approved database schema/migration foundation on `cpc/construction`, then reconcile Supabase integration and security enforcement before moving into API/server implementation.
+Reconcile generated Supabase types and Next.js server/client integration on `cpc/construction`, establish the environment-variable contract, then build the server-side repository/data-access layer and executable RLS authorization tests.
