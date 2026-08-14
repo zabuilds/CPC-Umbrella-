@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "../types";
+import type { Database } from "@/lib/supabase/types";
 
 type Client = SupabaseClient<Database>;
 type ClientInsert = Database["public"]["Tables"]["clients"]["Insert"];
