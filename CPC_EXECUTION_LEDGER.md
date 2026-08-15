@@ -43,12 +43,14 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Database implementation checkpoint committed to `cpc/construction`.
 - Server-side authorization/data-access verification completed and documented in `docs/CPC_SERVER_AUTHORIZATION_VERIFICATION.md`.
 - Verified server Supabase client, environment contract, role helper, CPC repositories, API authentication gates, typed database contract, and anonymous RLS regression coverage.
+- Canonical core-schema migration artifact restored to `supabase/migrations/20260814000000_cpc_core_schema_and_rls_foundation.sql` from the previously committed authoritative CPC migration; no live database mutation performed.
+- Controlled authenticated RLS regression plan added at `supabase/tests/cpc_authenticated_authorization_plan.sql` covering owner, operations, inspector, vendor, cross-client isolation, role escalation, and anonymous denial scenarios.
 
 ## Current Workstream
 ### Workstream A — Construction
 1. Repository/application scaffold reconciliation — complete.
-2. Database implementation and migrations — core foundation verified; repository migration artifact reconciliation required.
-3. Supabase integration and security enforcement — active.
+2. Database implementation and migrations — core foundation verified; canonical migration artifact restored.
+3. Supabase integration and security enforcement — active; controlled authenticated RLS execution remains gated on a dedicated test fixture environment.
 4. API/server implementation — foundation verified.
 5. Frontend application shell and core workflows.
 6. Billing/integration implementation.
@@ -74,8 +76,8 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 ## Current Blockers / Reconciliation Items
 - Lovable implementation credits are temporarily exhausted. This does not block repository construction work that can be executed through the available engineering toolchain.
 - GitHub connector mutation operations may be intermittently restricted by the platform safety layer. Confirmed writes are preserved; blocked writes are not claimed as saved.
-- The ledger previously stated that the canonical core-schema migration existed at `supabase/migrations/20260814000000_cpc_core_schema_and_rls_foundation.sql`. Repository inspection on `cpc/construction` did not find that migration or a `supabase/migrations` directory. This is now recorded as a repository reconciliation discrepancy. No live database state is inferred from that absence, and no destructive or duplicate migration was created.
-- The current executable authorization SQL covers anonymous denial but not authenticated role-specific fixtures. Role-based tests should be added only after the canonical schema/migration source and controlled test-fixture strategy are reconciled.
+- Vercel environment configuration remains an infrastructure gate for a clean deployed build because the required Supabase public environment variables were previously reported missing. No credentials are stored in source control.
+- Authenticated role-specific RLS tests are not yet claimed as passed. A controlled test plan now exists, but actual execution requires authenticated test identities in a dedicated test environment. No production/live database mutation is authorized merely to satisfy this test gate.
 
 ## Construction Checkpoints
 ### Repository/Application Scaffold Reconciliation — COMPLETE
@@ -87,7 +89,7 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Existing engineering documentation remains preserved.
 - No destructive branch operation performed.
 
-### Core Database Foundation — COMPLETE / REPOSITORY ARTIFACT RECONCILIATION OPEN
+### Core Database Foundation — COMPLETE
 - Existing CPC Supabase project was previously verified healthy.
 - Core relational schema was previously implemented and verified.
 - RLS was previously enabled on all CPC public tables.
@@ -95,15 +97,17 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Security advisor was previously clean after remediation.
 - Performance advisor was previously clean.
 - Generated database types are present in the construction branch.
-- Canonical migration is referenced by the ledger but is not currently present in the repository tree; restore/reconcile the authoritative migration artifact before extending schema-dependent construction.
+- Canonical migration artifact restored from authoritative historical commit.
+- No live database mutation performed during repository reconciliation.
 
 ### Application Reconciliation / Server Foundation — VERIFIED
 - `cpc/construction` contains the Next.js server/client Supabase integration layer, generated database types, CPC role enforcement, repository/data-access modules, and CPC API route groups for clients, properties, inspections, inspection reports, issues, and vendors.
 - API routes perform authenticated-user checks before repository access.
 - CPC repository modules delegate persistence to the Supabase layer rather than introducing a second data source.
 - Existing authorization SQL coverage is present under `supabase/tests/cpc_authorization.sql`.
+- Controlled authenticated authorization test plan is present under `supabase/tests/cpc_authenticated_authorization_plan.sql`.
 - Construction branch remains isolated; comparison against `main` shows divergence, so no synchronization or merge was performed.
 - Server authorization/data-access verification is documented in `docs/CPC_SERVER_AUTHORIZATION_VERIFICATION.md`.
 
 ## Next Milestone
-Reconcile the authoritative core-schema migration artifact into `cpc/construction` without changing the live database or creating a duplicate schema. Once reconciled, add controlled authenticated role-based authorization regression tests. Then checkpoint security/data-access readiness before beginning billing/integration construction.
+Execute the authenticated RLS regression suite in a controlled test environment if the connected Supabase test tooling permits it. In parallel, resolve the existing Vercel environment configuration gate without exposing or committing secrets. After both gates are verified, checkpoint security/data-access readiness and begin the billing/integration foundation.
