@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { constructStripeWebhookEvent, mapStripeWebhookEvent } from "@/lib/cpc/billing/stripe-adapter";
+import {
+  claimBillingEvent,
+  markBillingEventFailed,
+  markBillingEventProcessed,
+} from "@/lib/cpc/billing/event-repository";
 
 export const runtime = "nodejs";
 
@@ -16,16 +21,34 @@ export async function POST(request: NextRequest) {
   try {
     const event = constructStripeWebhookEvent(payload, signature);
     const mapped = mapStripeWebhookEvent(event);
-
-    // Persistence is intentionally kept behind the billing repository boundary.
-    // Until that repository is wired to a dedicated billing-events table, this route
-    // verifies and maps the event but performs no billing state mutation.
-    return NextResponse.json({
-      received: true,
-      eventId: mapped.envelope.providerEventId,
+    const claim = await claimBillingEvent({
+      providerEventId: mapped.envelope.providerEventId,
+      eventType: mapped.envelope.eventType,
       idempotencyKey: mapped.idempotencyKey,
     });
+
+    if (!claim.claimed) {
+      return NextResponse.json({ received: true, duplicate: true });
+    }
+
+    if (!claim.event?.id) {
+      return NextResponse.json({ error: "Billing event claim failed" }, { status: 500 });
+    }
+
+    try {
+      // State reconciliation is intentionally isolated until provider-event handlers
+      // are added for each authoritative CPC billing transition.
+      await markBillingEventProcessed(claim.event.id);
+    } catch (error) {
+      await markBillingEventFailed(
+        claim.event.id,
+        error instanceof Error ? error.message : "Billing event processing failed",
+      );
+      throw error;
+    }
+
+    return NextResponse.json({ received: true, eventId: event.id });
   } catch {
-    return NextResponse.json({ error: "Invalid Stripe webhook" }, { status: 400 });
+    return NextResponse.json({ error: "Invalid or unprocessable Stripe webhook" }, { status: 400 });
   }
 }
