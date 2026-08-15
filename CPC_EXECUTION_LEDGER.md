@@ -45,6 +45,7 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Verified server Supabase client, environment contract, role helper, CPC repositories, API authentication gates, typed database contract, and anonymous RLS regression coverage.
 - Canonical core-schema migration artifact restored to `supabase/migrations/20260814000000_cpc_core_schema_and_rls_foundation.sql` from the previously committed authoritative CPC migration; no live database mutation performed.
 - Controlled authenticated RLS regression plan added at `supabase/tests/cpc_authenticated_authorization_plan.sql` covering owner, operations, inspector, vendor, cross-client isolation, role escalation, and anonymous denial scenarios.
+- Vercel environment gate documented at `docs/CPC_VERCEL_ENVIRONMENT_GATE.md`; required public Supabase environment variables were identified without exposing values.
 
 ## Current Workstream
 ### Workstream A — Construction
