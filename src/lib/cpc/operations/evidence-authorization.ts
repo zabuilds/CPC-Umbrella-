@@ -1,6 +1,6 @@
 import "server-only";
 
-export const CPC_EVIDENCE_ROLES = ["owner", "admin", "operations", "inspector"] as const;
+export const CPC_EVIDENCE_ROLES = ["owner", "admin", "operations", "inspector", "vendor"] as const;
 export type CpcEvidenceRole = (typeof CPC_EVIDENCE_ROLES)[number];
 
 export type EvidenceAction = "read" | "create" | "update" | "delete";
@@ -10,6 +10,7 @@ const roleActions: Record<CpcEvidenceRole, readonly EvidenceAction[]> = {
   admin: ["read", "create", "update", "delete"],
   operations: ["read", "create", "update"],
   inspector: ["read", "create", "update"],
+  vendor: ["read"],
 };
 
 export function canAccessEvidence(role: CpcEvidenceRole, action: EvidenceAction) {
