@@ -3,6 +3,7 @@ import { z } from "zod";
 export const cpcBillingProviderSchema = z.literal("stripe");
 export const cpcBillingStatusSchema = z.enum([
   "incomplete",
+  "incomplete_expired",
   "trialing",
   "active",
   "past_due",
@@ -49,8 +50,13 @@ export const CPC_BILLING_EVENT_TO_STATUS: Partial<
   "invoice.paid": "active",
 };
 
+export const CPC_BILLING_SECRET_ENV_KEYS = {
+  secretKey: "STRIPE_SECRET_KEY",
+  webhookSecret: "STRIPE_WEBHOOK_SECRET",
+} as const;
+
 /**
  * Server-only billing boundaries are enforced by the modules that consume these
- * contracts. Never place provider secret keys or webhook signing secrets here.
+ * contracts. Never expose provider secret keys or webhook signing secrets to the browser.
  */
 export const CPC_BILLING_PROVIDER = "stripe" as const;
