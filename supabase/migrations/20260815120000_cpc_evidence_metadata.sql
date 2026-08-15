@@ -28,8 +28,8 @@ create index if not exists evidence_metadata_issue_id_idx
 
 alter table public.evidence_metadata enable row level security;
 
--- Authorization is intentionally derived through the existing client/property
--- relationship. This migration does not introduce a parallel ownership model.
+-- All policies require the existing CPC tenant relationship and the
+-- authoritative profiles.role value. No parallel role system is introduced.
 create policy evidence_metadata_select_authorized
   on public.evidence_metadata
   for select
@@ -41,6 +41,12 @@ create policy evidence_metadata_select_authorized
       where p.id = evidence_metadata.property_id
         and p.client_id = evidence_metadata.client_id
     )
+    and exists (
+      select 1
+      from public.profiles profile
+      where profile.id = auth.uid()
+        and profile.role in ('owner', 'admin', 'operations', 'inspector', 'vendor')
+    )
   );
 
 create policy evidence_metadata_insert_authorized
@@ -49,6 +55,12 @@ create policy evidence_metadata_insert_authorized
   to authenticated
   with check (
     exists (
+      select 1
+      from public.profiles profile
+      where profile.id = auth.uid()
+        and profile.role in ('owner', 'admin', 'operations', 'inspector')
+    )
+    and exists (
       select 1
       from public.properties p
       join public.inspections i on i.property_id = p.id
@@ -75,6 +87,12 @@ create policy evidence_metadata_update_authorized
   using (
     exists (
       select 1
+      from public.profiles profile
+      where profile.id = auth.uid()
+        and profile.role in ('owner', 'admin', 'operations', 'inspector')
+    )
+    and exists (
+      select 1
       from public.properties p
       where p.id = evidence_metadata.property_id
         and p.client_id = evidence_metadata.client_id
@@ -82,6 +100,12 @@ create policy evidence_metadata_update_authorized
   )
   with check (
     exists (
+      select 1
+      from public.profiles profile
+      where profile.id = auth.uid()
+        and profile.role in ('owner', 'admin', 'operations', 'inspector')
+    )
+    and exists (
       select 1
       from public.properties p
       join public.inspections i on i.property_id = p.id
@@ -107,6 +131,12 @@ create policy evidence_metadata_delete_authorized
   to authenticated
   using (
     exists (
+      select 1
+      from public.profiles profile
+      where profile.id = auth.uid()
+        and profile.role in ('owner', 'admin')
+    )
+    and exists (
       select 1
       from public.properties p
       where p.id = evidence_metadata.property_id
