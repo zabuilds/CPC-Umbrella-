@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { claimBillingEvent, markBillingEventFailed, markBillingEventProcessed } from "@/lib/cpc/billing/event-repository";
+import { handleStripeBillingEvent } from "@/lib/cpc/billing/event-handlers";
+import {
+  claimBillingEvent,
+  markBillingEventFailed,
+  markBillingEventProcessed,
+} from "@/lib/cpc/billing/event-repository";
+import { upsertBillingState } from "@/lib/cpc/billing/state-repository";
 import { constructStripeWebhookEvent, mapStripeWebhookEvent } from "@/lib/cpc/billing/stripe-adapter";
 
 export const runtime = "nodejs";
@@ -12,16 +18,15 @@ export async function POST(request: NextRequest) {
   }
 
   const payload = await request.text();
-  let mapped: ReturnType<typeof mapStripeWebhookEvent>;
-  let eventId: string;
+  let event;
 
   try {
-    const event = constructStripeWebhookEvent(payload, signature);
-    mapped = mapStripeWebhookEvent(event);
-    eventId = event.id;
+    event = constructStripeWebhookEvent(payload, signature);
   } catch {
     return NextResponse.json({ error: "Invalid Stripe webhook" }, { status: 400 });
   }
+
+  const mapped = mapStripeWebhookEvent(event);
 
   let claim;
   try {
@@ -43,8 +48,14 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    // Provider-specific state handlers remain the next reconciliation layer.
+    const result = handleStripeBillingEvent(event);
+
+    if (result.kind === "subscription") {
+      await upsertBillingState(result.transition);
+    }
+
     await markBillingEventProcessed(claim.event.id);
+    return NextResponse.json({ received: true, processed: true });
   } catch (error) {
     try {
       await markBillingEventFailed(
@@ -56,6 +67,4 @@ export async function POST(request: NextRequest) {
     }
     return NextResponse.json({ error: "Billing event processing failed" }, { status: 500 });
   }
-
-  return NextResponse.json({ received: true, eventId });
 }
