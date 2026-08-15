@@ -2,6 +2,7 @@ import "server-only";
 
 import { getStripeClient } from "./stripe-adapter";
 import { requireBillingPriceId } from "./price-authorization";
+import { requireBillingReturnUrl } from "./return-url";
 
 function requireClientId(clientId: string) {
   if (!clientId || !/^[0-9a-f-]{36}$/i.test(clientId)) {
@@ -19,14 +20,16 @@ export async function createCpcCheckoutSession(input: {
 }) {
   const clientId = requireClientId(input.clientId);
   const priceId = requireBillingPriceId(input.priceId);
+  const successUrl = requireBillingReturnUrl(input.successUrl);
+  const cancelUrl = requireBillingReturnUrl(input.cancelUrl);
 
   const stripe = getStripeClient();
   return stripe.checkout.sessions.create({
     mode: "subscription",
     customer: input.customerId,
     line_items: [{ price: priceId, quantity: 1 }],
-    success_url: input.successUrl,
-    cancel_url: input.cancelUrl,
+    success_url: successUrl,
+    cancel_url: cancelUrl,
     metadata: { cpc_client_id: clientId },
     subscription_data: {
       metadata: { cpc_client_id: clientId },
@@ -41,6 +44,7 @@ export async function createCpcCustomerPortalSession(input: {
 }) {
   const clientId = requireClientId(input.clientId);
   if (!input.customerId) throw new Error("Stripe customer id is required");
+  const returnUrl = requireBillingReturnUrl(input.returnUrl);
 
   const stripe = getStripeClient();
   const billingState = await stripe.customers.retrieve(input.customerId);
@@ -52,6 +56,6 @@ export async function createCpcCustomerPortalSession(input: {
 
   return stripe.billingPortal.sessions.create({
     customer: input.customerId,
-    return_url: input.returnUrl,
+    return_url: returnUrl,
   });
 }
