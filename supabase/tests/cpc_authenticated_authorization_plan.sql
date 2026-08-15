@@ -1,0 +1,34 @@
+-- CPC authenticated authorization regression plan.
+-- This file intentionally documents controlled fixture expectations rather than
+-- creating auth.users or bypassing RLS inside the migration/test artifact.
+-- Execute in a dedicated Supabase test project with seeded users and profiles.
+
+-- Required fixture roles:
+-- owner_a: client/profile owner for property_a
+-- owner_b: client/profile owner for property_b
+-- operations_a: operations role
+-- inspector_a: inspector role assigned to inspection_a
+-- vendor_a: vendor role
+--
+-- Required fixture relationships:
+-- client_a -> owner_a -> property_a -> inspection_a -> report_a
+-- client_b -> owner_b -> property_b -> inspection_b -> report_b
+-- issue_a belongs to property_a and may reference vendor_a
+--
+-- Required assertions:
+-- 1. owner_a can read/write client_a and property_a.
+-- 2. owner_a cannot read client_b/property_b.
+-- 3. owner_a cannot write property_b by supplying client_b's ID.
+-- 4. operations_a can access approved operational CPC domain rows.
+-- 5. inspector_a can access assigned inspection_a and its report.
+-- 6. inspector_a cannot access unrelated client_b/property_b data.
+-- 7. vendor_a cannot read client/property records unless an explicit future
+--    vendor policy authorizes that access.
+-- 8. vendor_a cannot mutate inspections, reports, or client records.
+-- 9. authenticated users cannot elevate their own profile role through the
+--    profile update policy.
+-- 10. anonymous users remain denied across all CPC domain tables.
+--
+-- Execution gate:
+-- Do not treat these checks as passed until they are executed against a
+-- controlled test database with real authenticated identities and RLS enabled.
