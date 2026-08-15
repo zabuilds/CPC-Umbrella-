@@ -41,10 +41,9 @@ export function mapStripeSubscription(subscription: Stripe.Subscription) {
   return cpcBillingMappingSchema.parse({
     provider: CPC_BILLING_PROVIDER,
     clientId: subscription.metadata.cpc_client_id,
-    customerId,
-    subscriptionId: subscription.id,
-    status: subscription.status,
-    priceId,
+    stripeCustomerId: customerId,
+    stripeSubscriptionId: subscription.id,
+    stripePriceId: priceId,
   });
 }
 
