@@ -1,6 +1,7 @@
 import "server-only";
 
 import { getStripeClient } from "./stripe-adapter";
+import { requireBillingPriceId } from "./price-authorization";
 
 function requireClientId(clientId: string) {
   if (!clientId || !/^[0-9a-f-]{36}$/i.test(clientId)) {
@@ -17,13 +18,13 @@ export async function createCpcCheckoutSession(input: {
   cancelUrl: string;
 }) {
   const clientId = requireClientId(input.clientId);
-  if (!input.priceId) throw new Error("Price id is required");
+  const priceId = requireBillingPriceId(input.priceId);
 
   const stripe = getStripeClient();
   return stripe.checkout.sessions.create({
     mode: "subscription",
     customer: input.customerId,
-    line_items: [{ price: input.priceId, quantity: 1 }],
+    line_items: [{ price: priceId, quantity: 1 }],
     success_url: input.successUrl,
     cancel_url: input.cancelUrl,
     metadata: { cpc_client_id: clientId },
