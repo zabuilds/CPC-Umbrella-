@@ -1,6 +1,6 @@
 import "server-only";
 
-import { getSupabaseAdminClient } from "@/lib/supabase/server";
+import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export type BillingEventStatus = "received" | "processed" | "failed";
 
