@@ -10,7 +10,7 @@ export type CpcBillingTransition = {
   stripeCustomerId: string;
   stripeSubscriptionId: string | null;
   stripePriceId: string | null;
-  status: z.infer<typeof cpcBillingStatusSchema>;
+  status: ReturnType<typeof cpcBillingStatusSchema.parse>;
 };
 
 function getClientId(metadata: Stripe.Metadata): string {
@@ -37,6 +37,5 @@ export function reconcileSubscription(
 }
 
 export async function fetchSubscription(subscriptionId: string) {
-  const stripe = getStripeClient();
-  return stripe.subscriptions.retrieve(subscriptionId);
+  return getStripeClient().subscriptions.retrieve(subscriptionId);
 }
