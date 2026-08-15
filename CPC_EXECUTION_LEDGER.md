@@ -12,6 +12,7 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Construction handoff: complete and committed.
 - Repository/application scaffold reconciliation: complete on `cpc/construction`.
 - Core Supabase database foundation: implemented and verified.
+- Billing server foundation is under construction without live Stripe activity.
 - No production secrets or PATs are stored in this repository.
 
 ## Completed / Verified
@@ -24,13 +25,10 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Lovable foundation pass: client/property domain slice and associated UI foundation were previously verified; 27 tests, typecheck, and route verification were reported passing during the latest implementation pass.
 - GitHub checkpoint preservation.
 - CPC execution ledger created and maintained.
-- Pre-Lovable API contract package prepared for implementation; repository write availability is intermittent, so only confirmed commits are treated as saved.
 - Database/security readiness architecture prepared, including UUID relationships, lifecycle fields, indexing, deny-by-default RLS, client-property scoping, internal roles, vendor assignment boundaries, storage policy requirements, migration order, and verification gates.
-- Automatic conversation-level CPC progression tracking established: material progress is preserved in the active conversation record and GitHub ledger when the write path permits.
 - QA acceptance matrix created and committed, covering onboarding, properties, inspections, reports, issues/vendors, RLS/security, UI/UX, reliability/regression, and production release gates.
 - Construction handoff record committed on `cpc/construction`.
-- Next.js application scaffold reconciled onto `cpc/construction`, including package manifest, Next.js configuration, TypeScript configuration, application root layout, global styles, and initial application entry page.
-- Engineering foundation and repository-structure documents reconciled into the construction branch without replacing the approved implementation specifications.
+- Next.js application scaffold reconciled onto `cpc/construction`.
 - Existing CPC Supabase project identified and confirmed healthy; no second project created.
 - Core CPC database tables implemented: profiles, clients, properties, vendors, inspections, issues, inspection_reports, property_contacts.
 - UUID relationships, lifecycle/status fields, timestamps, constraints, and core indexes implemented.
@@ -40,26 +38,24 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Security advisor remediated and re-run with no security lints.
 - Performance advisor returned no lints.
 - Supabase TypeScript database types generated successfully.
-- Database implementation checkpoint committed to `cpc/construction`.
-- Server-side authorization/data-access verification completed and documented in `docs/CPC_SERVER_AUTHORIZATION_VERIFICATION.md`.
-- Verified server Supabase client, environment contract, role helper, CPC repositories, API authentication gates, typed database contract, and anonymous RLS regression coverage.
-- Canonical core-schema migration artifact restored to `supabase/migrations/20260814000000_cpc_core_schema_and_rls_foundation.sql` from the previously committed authoritative CPC migration; no live database mutation performed.
-- Controlled authenticated RLS regression plan added at `supabase/tests/cpc_authenticated_authorization_plan.sql` covering owner, operations, inspector, vendor, cross-client isolation, role escalation, and anonymous denial scenarios.
-- Vercel environment gate documented at `docs/CPC_VERCEL_ENVIRONMENT_GATE.md`; required public Supabase environment variables were identified without exposing values.
-- Billing construction gate established at `docs/CPC_BILLING_CONSTRUCTION_GATE.md`, preserving the authoritative CPC billing architecture and explicitly preventing duplicate live Stripe objects or invented pricing.
-- Stripe subscription integration path validated through the existing CPC billing architecture: hosted Checkout, recurring subscriptions, Customer Portal, pay-up-front, standard recovery, and cancel-at-period-end posture.
-- CPC billing domain contracts implemented in `src/lib/cpc/billing/contracts.ts` without adding live Stripe objects or calls.
-- CPC webhook idempotency primitive implemented in `src/lib/cpc/billing/webhook-idempotency.ts` using provider event IDs as the uniqueness boundary.
-- CPC server webhook boundary implemented in `src/lib/cpc/billing/stripe-webhook.ts`, normalizing verified event envelopes and enforcing server-only webhook-secret configuration.
+- Server-side authorization/data-access verification completed and documented.
+- Canonical core-schema migration artifact restored from the previously committed authoritative CPC migration.
+- Controlled authenticated RLS regression plan added; actual authenticated execution remains gated on test identities.
+- Vercel environment gate documented; required public Supabase environment variables identified without exposing values.
+- Billing construction gate established, preserving authoritative CPC pricing and billing architecture.
+- Server-only Stripe billing contracts, provider adapter, webhook signature boundary, event idempotency, event persistence, billing-state persistence, subscription reconciliation, and event handlers constructed without live Stripe activity.
+- Stripe webhook route now claims events idempotently and persists subscription reconciliation state.
+- Billing state repository test coverage added.
+- Stripe billing event-handler test coverage added for subscription creation, update/cancellation routing, supported non-subscription event deferral, and missing CPC metadata rejection.
 
 ## Current Workstream
 ### Workstream A — Construction
 1. Repository/application scaffold reconciliation — complete.
-2. Database implementation and migrations — core foundation verified; canonical migration artifact restored.
-3. Supabase integration and security enforcement — active; controlled authenticated RLS execution remains gated on a dedicated test fixture environment.
-4. API/server implementation — foundation verified.
+2. Database implementation and migrations — core foundation verified; billing persistence added.
+3. Supabase integration and security enforcement — active; authenticated RLS execution remains gated on dedicated test identities.
+4. API/server implementation — core foundation verified; billing webhook/reconciliation layer under verification.
 5. Frontend application shell and core workflows.
-6. Billing/integration implementation — domain contracts, idempotency, and webhook boundary complete; provider adapter/persistence next.
+6. Billing/integration implementation — server contracts, adapter, webhook, idempotency, persistence, reconciliation, and initial automated coverage constructed; verification gate next.
 7. QA automation and verification.
 8. Preview deployment and browser verification.
 9. Production readiness and deployment.
@@ -83,8 +79,8 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Lovable implementation credits are temporarily exhausted. This does not block repository construction work that can be executed through the available engineering toolchain.
 - GitHub connector mutation operations may be intermittently restricted by the platform safety layer. Confirmed writes are preserved; blocked writes are not claimed as saved.
 - Vercel environment configuration remains an infrastructure gate for a clean deployed build because the required Supabase public environment variables were previously reported missing. No credentials are stored in source control.
-- Authenticated role-specific RLS tests are not yet claimed as passed. A controlled test plan now exists, but actual execution requires authenticated test identities in a dedicated test environment. No production/live database mutation is authorized merely to satisfy this test gate.
-- Live Stripe object creation and payment processing remain intentionally deferred until the server provider adapter, signature verification, persistence/idempotency integration, required environment configuration, and release gates are validated.
+- Authenticated role-specific RLS tests are not yet claimed as passed. A controlled test plan exists, but actual execution requires authenticated test identities in a dedicated test environment.
+- Live Stripe object creation and payment processing remain intentionally deferred. Billing contracts, adapter, webhook signature verification, event persistence/idempotency, reconciliation, and initial unit coverage are constructed, but full verification and live configuration remain release gates.
 
 ## Construction Checkpoints
 ### Repository/Application Scaffold Reconciliation — COMPLETE
@@ -105,25 +101,28 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Performance advisor was previously clean.
 - Generated database types are present in the construction branch.
 - Canonical migration artifact restored from authoritative historical commit.
-- No live database mutation performed during repository reconciliation.
+- Billing-events and billing-state persistence structures added with service-role-only RLS.
 
 ### Application Reconciliation / Server Foundation — VERIFIED
 - `cpc/construction` contains the Next.js server/client Supabase integration layer, generated database types, CPC role enforcement, repository/data-access modules, and CPC API route groups for clients, properties, inspections, inspection reports, issues, and vendors.
 - API routes perform authenticated-user checks before repository access.
 - CPC repository modules delegate persistence to the Supabase layer rather than introducing a second data source.
-- Existing authorization SQL coverage is present under `supabase/tests/cpc_authorization.sql`.
-- Controlled authenticated authorization test plan is present under `supabase/tests/cpc_authenticated_authorization_plan.sql`.
+- Existing authorization SQL coverage is present.
+- Controlled authenticated authorization test plan is present.
 - Construction branch remains isolated; comparison against `main` shows divergence, so no synchronization or merge was performed.
-- Server authorization/data-access verification is documented in `docs/CPC_SERVER_AUTHORIZATION_VERIFICATION.md`.
+- Server authorization/data-access verification is documented.
 
 ### Billing Construction Gate — IN PROGRESS
 - Existing CPC billing architecture remains authoritative.
 - No new pricing or duplicate Stripe objects introduced.
 - Stripe subscription integration path selected: hosted Checkout, recurring subscriptions, Customer Portal, pay-up-front, standard recovery, cancel-at-period-end.
 - Domain contracts implemented without live Stripe calls.
-- Webhook idempotency primitive implemented using provider event IDs.
-- Webhook normalization/configuration boundary implemented; raw Stripe signature verification and persistent event recording remain at the HTTP/provider integration layer.
-- Next step is the server-only Stripe provider adapter plus persistence/reconciliation integration, with live operations still disabled.
+- Webhook signature verification and normalization boundary implemented.
+- Durable event idempotency and billing-event persistence implemented.
+- Durable client billing-state persistence implemented.
+- Subscription creation/update/cancellation reconciliation implemented.
+- Initial automated billing repository and event-handler coverage added.
+- Full test/build execution and end-to-end webhook verification remain release gates.
 
 ## Next Milestone
-Construct the server-only Stripe provider adapter and persistence/reconciliation layer around the implemented contracts and webhook boundary. Do not create live Stripe objects or process payments during this milestone.
+Run the construction verification gate against the billing layer: typecheck, unit tests, and static inspection of the webhook/reconciliation path. Correct only confirmed failures. Then checkpoint the verified billing foundation before advancing to Checkout/Customer Portal server endpoints.
