@@ -10,8 +10,14 @@ function propertyPrefix(propertyId: string) {
 }
 
 export function evidenceStoragePath(propertyId: string, inspectionId: string, evidenceId: string, filename: string) {
+  if (!propertyId || !inspectionId || !evidenceId) throw new Error("Evidence storage identifiers are required");
   const safeName = filename.replace(/[^a-zA-Z0-9._-]/g, "_");
   return `${propertyPrefix(propertyId)}/inspections/${inspectionId}/evidence/${evidenceId}/${safeName}`;
+}
+
+export function assertEvidenceStoragePath(path: string, propertyId: string, inspectionId: string, evidenceId: string) {
+  const prefix = `${propertyPrefix(propertyId)}/inspections/${inspectionId}/evidence/${evidenceId}/`;
+  if (!path.startsWith(prefix)) throw new Error("Evidence storage path does not match its CPC ownership context");
 }
 
 export async function createEvidenceUploadUrl(
@@ -25,6 +31,14 @@ export async function createEvidenceUploadUrl(
   return client.storage.from(BUCKET).createSignedUploadUrl(path);
 }
 
-export async function createEvidenceDownloadUrl(client: Client, storagePath: string, expiresInSeconds = 300) {
+export async function createEvidenceDownloadUrl(
+  client: Client,
+  storagePath: string,
+  propertyId: string,
+  inspectionId: string,
+  evidenceId: string,
+  expiresInSeconds = 300,
+) {
+  assertEvidenceStoragePath(storagePath, propertyId, inspectionId, evidenceId);
   return client.storage.from(BUCKET).createSignedUrl(storagePath, expiresInSeconds);
 }
