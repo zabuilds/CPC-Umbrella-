@@ -24,4 +24,11 @@ describe("CPC evidence authorization", () => {
     expect(canAccessEvidence("admin", "delete")).toBe(true);
     expect(canAccessEvidence("owner", "update")).toBe(true);
   });
+
+  it("keeps vendor evidence access read-only", () => {
+    expect(canAccessEvidence("vendor", "read")).toBe(true);
+    expect(canAccessEvidence("vendor", "create")).toBe(false);
+    expect(canAccessEvidence("vendor", "update")).toBe(false);
+    expect(canAccessEvidence("vendor", "delete")).toBe(false);
+  });
 });
