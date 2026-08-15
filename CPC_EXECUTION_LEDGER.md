@@ -95,5 +95,13 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Generated database types verified.
 - No credentials or secrets stored in source control.
 
+### Application Reconciliation / Server Foundation — VERIFIED
+- `cpc/construction` contains the Next.js server/client Supabase integration layer, generated database types, CPC role enforcement, repository/data-access modules, and CPC API route groups for clients, properties, inspections, inspection reports, issues, and vendors.
+- API routes perform authenticated-user checks before repository access.
+- CPC repository modules delegate persistence to the Supabase layer rather than introducing a second data source.
+- Existing authorization SQL coverage is present under `supabase/tests/cpc_authorization.sql`.
+- Construction branch remains isolated; comparison against `main` shows divergence, so no synchronization or merge was performed.
+- Latest confirmed repository CI status inspected: Vercel check is successful on the current canonical database-fix commit.
+
 ## Next Milestone
-Reconcile generated Supabase types and Next.js server/client integration on `cpc/construction`, establish the environment-variable contract, then build the server-side repository/data-access layer and executable RLS authorization tests.
+Execute the server-side authorization/data-access verification pass: inspect the existing role helper, repository modules, Supabase server/client environment contract, and authorization SQL test coverage; make only narrowly scoped corrections where an actual gap is confirmed. Then checkpoint the verified API/server foundation before moving into billing/integration construction.
