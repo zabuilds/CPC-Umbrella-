@@ -46,6 +46,7 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Canonical core-schema migration artifact restored to `supabase/migrations/20260814000000_cpc_core_schema_and_rls_foundation.sql` from the previously committed authoritative CPC migration; no live database mutation performed.
 - Controlled authenticated RLS regression plan added at `supabase/tests/cpc_authenticated_authorization_plan.sql` covering owner, operations, inspector, vendor, cross-client isolation, role escalation, and anonymous denial scenarios.
 - Vercel environment gate documented at `docs/CPC_VERCEL_ENVIRONMENT_GATE.md`; required public Supabase environment variables were identified without exposing values.
+- Billing construction gate established at `docs/CPC_BILLING_CONSTRUCTION_GATE.md`, preserving the authoritative CPC billing architecture and explicitly preventing duplicate live Stripe objects or invented pricing.
 
 ## Current Workstream
 ### Workstream A — Construction
@@ -54,7 +55,7 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 3. Supabase integration and security enforcement — active; controlled authenticated RLS execution remains gated on a dedicated test fixture environment.
 4. API/server implementation — foundation verified.
 5. Frontend application shell and core workflows.
-6. Billing/integration implementation.
+6. Billing/integration implementation — construction gate established; implementation contracts next.
 7. QA automation and verification.
 8. Preview deployment and browser verification.
 9. Production readiness and deployment.
@@ -79,6 +80,7 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - GitHub connector mutation operations may be intermittently restricted by the platform safety layer. Confirmed writes are preserved; blocked writes are not claimed as saved.
 - Vercel environment configuration remains an infrastructure gate for a clean deployed build because the required Supabase public environment variables were previously reported missing. No credentials are stored in source control.
 - Authenticated role-specific RLS tests are not yet claimed as passed. A controlled test plan now exists, but actual execution requires authenticated test identities in a dedicated test environment. No production/live database mutation is authorized merely to satisfy this test gate.
+- Live Stripe object creation and payment processing remain intentionally deferred until the billing contracts, server boundaries, webhook verification/idempotency, and required environment configuration are validated.
 
 ## Construction Checkpoints
 ### Repository/Application Scaffold Reconciliation — COMPLETE
@@ -110,5 +112,11 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Construction branch remains isolated; comparison against `main` shows divergence, so no synchronization or merge was performed.
 - Server authorization/data-access verification is documented in `docs/CPC_SERVER_AUTHORIZATION_VERIFICATION.md`.
 
+### Billing Construction Gate — ESTABLISHED
+- Existing CPC billing architecture remains authoritative.
+- No new pricing or duplicate Stripe objects introduced.
+- Checkout, Customer Portal, webhook, idempotency, mapping, retry, and reconciliation requirements are documented as construction boundaries.
+- Live Stripe operations remain disabled/deferred until the implementation gates are satisfied.
+
 ## Next Milestone
-Execute the authenticated RLS regression suite in a controlled test environment if the connected Supabase test tooling permits it. In parallel, resolve the existing Vercel environment configuration gate without exposing or committing secrets. After both gates are verified, checkpoint security/data-access readiness and begin the billing/integration foundation.
+Construct the CPC billing server contracts and webhook/idempotency boundary using the already-authoritative billing architecture, without creating live Stripe objects. In parallel, keep the Vercel environment gate isolated and unchanged until the required public Supabase environment configuration is available.
