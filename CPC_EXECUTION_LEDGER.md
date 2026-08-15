@@ -40,15 +40,16 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Security advisor remediated and re-run with no security lints.
 - Performance advisor returned no lints.
 - Supabase TypeScript database types generated successfully.
-- Canonical migration recorded in `supabase/migrations/20260814000000_cpc_core_schema_and_rls_foundation.sql`.
 - Database implementation checkpoint committed to `cpc/construction`.
+- Server-side authorization/data-access verification completed and documented in `docs/CPC_SERVER_AUTHORIZATION_VERIFICATION.md`.
+- Verified server Supabase client, environment contract, role helper, CPC repositories, API authentication gates, typed database contract, and anonymous RLS regression coverage.
 
 ## Current Workstream
 ### Workstream A — Construction
 1. Repository/application scaffold reconciliation — complete.
-2. Database implementation and migrations — complete for core foundation; continue with application reconciliation and security test coverage.
+2. Database implementation and migrations — core foundation verified; repository migration artifact reconciliation required.
 3. Supabase integration and security enforcement — active.
-4. API/server implementation.
+4. API/server implementation — foundation verified.
 5. Frontend application shell and core workflows.
 6. Billing/integration implementation.
 7. QA automation and verification.
@@ -58,7 +59,7 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 ### Workstream B — Existing implementation history
 1. Existing Lovable CPC foundation remains preserved as prior implementation history.
 2. Existing Supabase project remains the intended backend target; do not provision a second project.
-3. Backend implementation is now proceeding independently of Lovable where the connected engineering toolchain permits.
+3. Backend implementation is proceeding independently of Lovable where the connected engineering toolchain permits.
 
 ## Non-Negotiables
 - Do not fabricate integrations, data, tests, or deployment status.
@@ -70,9 +71,11 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - User should not need to issue a separate save command for ordinary material CPC progression.
 - Preserve `main`, `cpc/foundation`, and `cpc-execution-sync`; no destructive merge or force update is authorized as part of construction.
 
-## Current Blockers
+## Current Blockers / Reconciliation Items
 - Lovable implementation credits are temporarily exhausted. This does not block repository construction work that can be executed through the available engineering toolchain.
 - GitHub connector mutation operations may be intermittently restricted by the platform safety layer. Confirmed writes are preserved; blocked writes are not claimed as saved.
+- The ledger previously stated that the canonical core-schema migration existed at `supabase/migrations/20260814000000_cpc_core_schema_and_rls_foundation.sql`. Repository inspection on `cpc/construction` did not find that migration or a `supabase/migrations` directory. This is now recorded as a repository reconciliation discrepancy. No live database state is inferred from that absence, and no destructive or duplicate migration was created.
+- The current executable authorization SQL covers anonymous denial but not authenticated role-specific fixtures. Role-based tests should be added only after the canonical schema/migration source and controlled test-fixture strategy are reconciled.
 
 ## Construction Checkpoints
 ### Repository/Application Scaffold Reconciliation — COMPLETE
@@ -84,16 +87,15 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Existing engineering documentation remains preserved.
 - No destructive branch operation performed.
 
-### Core Database Foundation — COMPLETE
-- Existing CPC Supabase project verified healthy.
-- Public schema verified empty before CPC application tables were introduced.
-- Core relational schema implemented through a named migration.
-- RLS enabled on all CPC public tables.
-- Access policies implemented for approved initial ownership/operations boundaries.
-- Security advisor clean after remediation.
-- Performance advisor clean.
-- Generated database types verified.
-- No credentials or secrets stored in source control.
+### Core Database Foundation — COMPLETE / REPOSITORY ARTIFACT RECONCILIATION OPEN
+- Existing CPC Supabase project was previously verified healthy.
+- Core relational schema was previously implemented and verified.
+- RLS was previously enabled on all CPC public tables.
+- Access policies were previously implemented for approved initial ownership/operations boundaries.
+- Security advisor was previously clean after remediation.
+- Performance advisor was previously clean.
+- Generated database types are present in the construction branch.
+- Canonical migration is referenced by the ledger but is not currently present in the repository tree; restore/reconcile the authoritative migration artifact before extending schema-dependent construction.
 
 ### Application Reconciliation / Server Foundation — VERIFIED
 - `cpc/construction` contains the Next.js server/client Supabase integration layer, generated database types, CPC role enforcement, repository/data-access modules, and CPC API route groups for clients, properties, inspections, inspection reports, issues, and vendors.
@@ -101,7 +103,7 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - CPC repository modules delegate persistence to the Supabase layer rather than introducing a second data source.
 - Existing authorization SQL coverage is present under `supabase/tests/cpc_authorization.sql`.
 - Construction branch remains isolated; comparison against `main` shows divergence, so no synchronization or merge was performed.
-- Latest confirmed repository CI status inspected: Vercel check is successful on the current canonical database-fix commit.
+- Server authorization/data-access verification is documented in `docs/CPC_SERVER_AUTHORIZATION_VERIFICATION.md`.
 
 ## Next Milestone
-Execute the server-side authorization/data-access verification pass: inspect the existing role helper, repository modules, Supabase server/client environment contract, and authorization SQL test coverage; make only narrowly scoped corrections where an actual gap is confirmed. Then checkpoint the verified API/server foundation before moving into billing/integration construction.
+Reconcile the authoritative core-schema migration artifact into `cpc/construction` without changing the live database or creating a duplicate schema. Once reconciled, add controlled authenticated role-based authorization regression tests. Then checkpoint security/data-access readiness before beginning billing/integration construction.
