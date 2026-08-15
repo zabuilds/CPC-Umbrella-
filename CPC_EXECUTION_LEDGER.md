@@ -27,6 +27,7 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Database/security readiness architecture prepared, including UUID relationships, lifecycle fields, indexing, deny-by-default RLS, client-property scoping, internal roles, vendor assignment boundaries, storage policy requirements, migration order, and verification gates.
 - Automatic conversation-level CPC progression tracking established: material progress is preserved in the active conversation record and GitHub ledger when the write path permits.
 - QA acceptance matrix created and committed, covering onboarding, properties, inspections, reports, issues/vendors, RLS/security, UI/UX, reliability/regression, and production release gates.
+- Vercel Speed Insights setup guide prepared, with official documentation retrieved and Next.js integration instructions ready for implementation when source code is synchronized.
 
 ## Current Workstream
 ### Workstream A — Pre-Lovable execution
