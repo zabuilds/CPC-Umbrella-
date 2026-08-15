@@ -47,6 +47,10 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Controlled authenticated RLS regression plan added at `supabase/tests/cpc_authenticated_authorization_plan.sql` covering owner, operations, inspector, vendor, cross-client isolation, role escalation, and anonymous denial scenarios.
 - Vercel environment gate documented at `docs/CPC_VERCEL_ENVIRONMENT_GATE.md`; required public Supabase environment variables were identified without exposing values.
 - Billing construction gate established at `docs/CPC_BILLING_CONSTRUCTION_GATE.md`, preserving the authoritative CPC billing architecture and explicitly preventing duplicate live Stripe objects or invented pricing.
+- Stripe subscription integration path validated through the Stripe implementation planner: hosted Checkout, flat-rate recurring subscriptions, self-service Customer Portal, pay-up-front default, standard automated recovery/Smart Retries, and cancel-at-period-end as the default lifecycle posture.
+- CPC billing domain contracts implemented in `src/lib/cpc/billing/contracts.ts` without adding the Stripe SDK or making live Stripe calls.
+- CPC webhook idempotency primitives implemented in `src/lib/cpc/billing/idempotency.ts` using provider event IDs as the durable uniqueness boundary.
+- CPC billing module boundary documented in `src/lib/cpc/billing/README.md`.
 
 ## Current Workstream
 ### Workstream A — Construction
@@ -55,7 +59,7 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 3. Supabase integration and security enforcement — active; controlled authenticated RLS execution remains gated on a dedicated test fixture environment.
 4. API/server implementation — foundation verified.
 5. Frontend application shell and core workflows.
-6. Billing/integration implementation — construction gate established; implementation contracts next.
+6. Billing/integration implementation — domain contracts and idempotency foundation complete; server adapter next.
 7. QA automation and verification.
 8. Preview deployment and browser verification.
 9. Production readiness and deployment.
@@ -80,7 +84,7 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - GitHub connector mutation operations may be intermittently restricted by the platform safety layer. Confirmed writes are preserved; blocked writes are not claimed as saved.
 - Vercel environment configuration remains an infrastructure gate for a clean deployed build because the required Supabase public environment variables were previously reported missing. No credentials are stored in source control.
 - Authenticated role-specific RLS tests are not yet claimed as passed. A controlled test plan now exists, but actual execution requires authenticated test identities in a dedicated test environment. No production/live database mutation is authorized merely to satisfy this test gate.
-- Live Stripe object creation and payment processing remain intentionally deferred until the billing contracts, server boundaries, webhook verification/idempotency, and required environment configuration are validated.
+- Live Stripe object creation and payment processing remain intentionally deferred until the billing server adapter, webhook signature verification/idempotency, required environment configuration, and release gates are validated.
 
 ## Construction Checkpoints
 ### Repository/Application Scaffold Reconciliation — COMPLETE
@@ -112,11 +116,13 @@ Authoritative construction-control record for CPC execution. Preserve completed 
 - Construction branch remains isolated; comparison against `main` shows divergence, so no synchronization or merge was performed.
 - Server authorization/data-access verification is documented in `docs/CPC_SERVER_AUTHORIZATION_VERIFICATION.md`.
 
-### Billing Construction Gate — ESTABLISHED
+### Billing Construction Gate — IN PROGRESS
 - Existing CPC billing architecture remains authoritative.
 - No new pricing or duplicate Stripe objects introduced.
-- Checkout, Customer Portal, webhook, idempotency, mapping, retry, and reconciliation requirements are documented as construction boundaries.
-- Live Stripe operations remain disabled/deferred until the implementation gates are satisfied.
+- Stripe subscription integration path selected: hosted Checkout, flat-rate recurring subscriptions, Customer Portal, pay-up-front, standard recovery, cancel-at-period-end.
+- Domain contracts implemented without live Stripe calls.
+- Webhook idempotency primitive implemented using provider event IDs.
+- Next step is the server-only Stripe adapter and webhook boundary, with signature verification and database persistence still gated behind required environment/configuration and test verification.
 
 ## Next Milestone
-Construct the CPC billing server contracts and webhook/idempotency boundary using the already-authoritative billing architecture, without creating live Stripe objects. In parallel, keep the Vercel environment gate isolated and unchanged until the required public Supabase environment configuration is available.
+Construct the server-only Stripe adapter and webhook boundary around the implemented contracts, including signature verification, idempotent event persistence, and safe subscription-state mapping. Do not create live Stripe objects or process payments during this milestone.
